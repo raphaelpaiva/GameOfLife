@@ -5,6 +5,8 @@ import sys
 
 from copy import deepcopy
 
+import utils
+
 FPS = 30                             # Frames per second.
 DEFAULT_BOARD_SIZE = (80, 80)        # Board size. Only square boards are supported for now.
 DEFAULT_SCREEN_SIZE = (800, 800)      # Default Screen size
@@ -128,18 +130,23 @@ class Plotter(object):
     self.game.update_board()
 
   def _plot(self):
+    self._plot_board()
+    
+    textsurface = self.font.render(f"Generation: {self.game.generation_count}", False, (255, 0, 255))
+    
+    self.screen.blit(textsurface, (0, 0))
+
+    pygame.display.flip()
+
+  def _plot_board(self):
     self.screen.fill((255,255,255))
     board = self.game.board
-    
+
     for line in range(len(board)):
       for column in range(len(board[line])):
         if board[line][column]:
           cell_rect = pygame.Rect(column * self.cell_size, line * self.cell_size, self.cell_size, self.cell_size)
           pygame.draw.rect(self.screen, 0, cell_rect)
-    textsurface = self.font.render(f"Generation: {self.game.generation_count}", False, (255, 0, 255))
-    self.screen.blit(textsurface, (0, 0))
-
-    pygame.display.flip()
 
 def _load_board_from_file():
   if len(sys.argv) <= 1:
@@ -147,8 +154,7 @@ def _load_board_from_file():
   
   filename = sys.argv[1]
   try:
-    with open(filename) as f:
-      return json.load(f)
+      return utils.load_board(filename)
   except Exception as e:
     print(f'Failed to load {filename}.')
     print(e)
