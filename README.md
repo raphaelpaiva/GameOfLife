@@ -7,4 +7,4 @@ This is a very simple implementation of Conway's game of life.
 
 Install the required libraries with `pip intall -r requirements.txt`
 
-Run with `python gol.py`
+Run with `python main.py`
