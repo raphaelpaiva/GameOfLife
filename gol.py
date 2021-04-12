@@ -7,18 +7,14 @@ from copy import deepcopy
 
 FPS = 30                             # Frames per second.
 DEFAULT_BOARD_SIZE = (80, 80)        # Board size. Only square boards are supported for now.
+DEFAULT_SCREEN_SIZE = (800, 800)      # Default Screen size
 DEFAULT_CELL_SIZE = 10               # "Zoom". It grows the cells so they are more easily visible.
 DEFAULT_CELL_LIFE_PROBABILITY = 0.10 # Probability of randomly generating a live cell when a new board is constructed.
 
 DIRECTIONS = [
-  (1,  0), # SOUTH
-  (1,  1), # SOUTHEAST
-  (0,  1), # EAST
-  (-1, 1), # NORTHEAST
-  (-1, 0), # NORTH
-  (-1,-1), # NORTHWEST
-  (0, -1), # WEST
-  (1, -1)  # SOUTHWEST
+  (-1,-1), (-1, 0), (-1, 1),
+  (0, -1),          (0,  1),
+  (1, -1), (1,  0), (1,  1),
 ]
 
 class GameOfLife(object):
@@ -82,18 +78,21 @@ class GameOfLife(object):
     return neighbours
 
 class Plotter(object):
-  def __init__(self, game, cell_size=DEFAULT_CELL_SIZE):
+  def __init__(self, game, cell_size=DEFAULT_CELL_SIZE, screen_size=DEFAULT_SCREEN_SIZE):
     self.game = game
     self.cell_size = cell_size
     
     self.running = True
     
-    self.screen_size = tuple([dimension * self.cell_size for dimension in self.game.board_size])
+    self.screen_size = DEFAULT_SCREEN_SIZE
     self.screen = pygame.display.set_mode(self.screen_size)
 
   def run(self):
     pygame.init()
     clock = pygame.time.Clock()
+    pygame.font.init()
+    system_default_font = pygame.font.get_default_font()
+    self.font = pygame.font.SysFont(system_default_font, 30)
     
     while self.running:
       clock.tick(FPS)
@@ -114,6 +113,13 @@ class Plotter(object):
         self.game.board = self.game._generate_random_board()
       if key_event.key == pygame.K_ESCAPE:
         self._exit()
+
+    mouse_events = pygame.event.get(eventtype=pygame.MOUSEBUTTONDOWN)
+    for mouse_event in mouse_events:
+      if mouse_event.button == 4: # Mousewheel up
+        self.cell_size += 1
+      if mouse_event.button == 5: # Mousewheel down
+        self.cell_size -= 1
   
   def _exit(self):
     self.running = False
@@ -130,11 +136,7 @@ class Plotter(object):
         if board[line][column]:
           cell_rect = pygame.Rect(column * self.cell_size, line * self.cell_size, self.cell_size, self.cell_size)
           pygame.draw.rect(self.screen, 0, cell_rect)
-    
-    pygame.font.init()
-    system_default_font = pygame.font.get_default_font()
-    myfont = pygame.font.SysFont(system_default_font, 30)
-    textsurface = myfont.render(f"Generation: {self.game.generation_count}", False, (255, 0, 255))
+    textsurface = self.font.render(f"Generation: {self.game.generation_count}", False, (255, 0, 255))
     self.screen.blit(textsurface, (0, 0))
 
     pygame.display.flip()
@@ -152,8 +154,7 @@ def _load_board_from_file():
     print(e)
     return None
 
-
-if __name__ == '__main__':
+def main():
   initial_board = _load_board_from_file()
   
   if initial_board is None:
@@ -176,3 +177,6 @@ if __name__ == '__main__':
   plotter = Plotter(game=game)
 
   plotter.run()
+
+if __name__ == '__main__':
+  main()
