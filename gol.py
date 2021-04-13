@@ -30,8 +30,10 @@ class Board(object):
   @staticmethod
   def partition(i_start: int, j_start: int, size: BoardSize_t):
     lines, columns = size
-    midpoint_i = int(lines / 2)
-    midpoint_j = int(columns / 2)
+    midpoint_i = i_start + int(lines / 2)
+    midpoint_j = j_start + int(columns / 2)
+    endpoint_i = i_start + lines
+    endpoint_j = j_start + columns
 
     #----+----+
     #  1 |  2 |
@@ -39,10 +41,10 @@ class Board(object):
     #  3 |  4 |
     #----+----+
     return [
-      (i_start, midpoint_i - 1, j_start, midpoint_j - 1), # first quadrant
-      (i_start, midpoint_i - 1, midpoint_j, columns - 1), # second quadrant
-      (midpoint_i, lines - 1,   j_start, midpoint_j - 1), # third quadrant
-      (midpoint_i, lines - 1,   midpoint_j, columns - 1)  # fourth quadrant
+      (i_start, midpoint_i - 1,      j_start, midpoint_j - 1), # first quadrant
+      (i_start, midpoint_i - 1,      midpoint_j, endpoint_j - 1), # second quadrant
+      (midpoint_i, endpoint_i - 1,   j_start, midpoint_j - 1), # third quadrant
+      (midpoint_i, endpoint_i - 1,   midpoint_j, endpoint_j - 1)  # fourth quadrant
     ]
 
   @staticmethod
@@ -55,11 +57,11 @@ class Board(object):
     return Board(size, random_board)
 
 class GameOfLife(object):
-  def __init__(self, board_size=DEFAULT_BOARD_SIZE, initial_board: Board = None, cell_life_probability: float = DEFAULT_CELL_LIFE_PROBABILITY, wrap_board=True):
+  def __init__(self, board_size=DEFAULT_BOARD_SIZE, initial_board: Board = None, cell_life_probability: float = DEFAULT_CELL_LIFE_PROBABILITY, wrap_board=True, max_depth: int = 3):
     self.cell_life_probability = cell_life_probability
     self.wrap = wrap_board
     self.generation_count = 0
-    self.max_depth = 3
+    self.max_depth = max_depth
     
     if initial_board is None:
       self.board = Board.Random(board_size, self.cell_life_probability)
@@ -85,8 +87,10 @@ class GameOfLife(object):
     lines, columns = (i_stop - i_start) + 1, (j_stop - j_start) + 1
     size = (lines, columns)
     
-    if self.board.state[i_start:i_stop + 1,j_start:j_stop + 1].sum() > 1:
-      if depth <= self.max_depth:
+    live_cell_count = self.board.state[i_start:i_stop + 1,j_start:j_stop + 1].sum()
+
+    if live_cell_count > 0:
+      if depth >= self.max_depth:
           self._analyze_range(quadrant, new_board)
       else:
         quadrants = self.board.partition(i_start, j_start, size)
