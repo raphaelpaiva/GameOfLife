@@ -39,6 +39,7 @@ class Plotter(object):
     for key_event in key_events:
       if key_event.key == pygame.K_SPACE:
         self.game.board = self.game.board.Random(size=self.game.board.size, cell_life_probability=self.game.cell_life_probability)
+        self.game.generation_count = 0
       if key_event.key == pygame.K_ESCAPE:
         self._exit()
 
