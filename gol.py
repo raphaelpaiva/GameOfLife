@@ -1,7 +1,7 @@
 import numpy
 from copy import deepcopy
 
-DEFAULT_BOARD_SIZE = (200, 200)        # Board size. Only square boards are supported for now.
+DEFAULT_BOARD_SIZE = (100, 100)      # Board size. Only square boards are supported for now.
 DEFAULT_CELL_LIFE_PROBABILITY = 0.10 # Probability of randomly generating a live cell when a new board is constructed.
 
 DIRECTIONS = [
