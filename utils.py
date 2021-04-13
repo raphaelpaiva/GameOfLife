@@ -40,5 +40,6 @@ def load_board(filename):
 
   return board
 
-if __name__ == '__main__':
-  json_to_bmp('scenarios/blinker.json', 'scenarios/blinker.bmp')
+def generate_test_board(size):
+  game = gol.GameOfLife(board_size=(size, size))
+  dump_board(game.board, f'testboard_{size}.bmp')

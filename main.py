@@ -1,5 +1,6 @@
 import sys
 
+import utils
 from gol import GameOfLife
 from plotter import Plotter
 
