@@ -38,7 +38,7 @@ class Plotter(object):
     key_events = pygame.event.get(eventtype=pygame.KEYDOWN)
     for key_event in key_events:
       if key_event.key == pygame.K_SPACE:
-        self.game.board = self.game._generate_random_board()
+        self.game.board = self.game.board.Random(size=self.game.board.size, cell_life_probability=self.game.cell_life_probability)
       if key_event.key == pygame.K_ESCAPE:
         self._exit()
 
@@ -68,8 +68,10 @@ class Plotter(object):
     self.screen.fill((255,255,255))
     board = self.game.board
 
-    for line in range(len(board)):
-      for column in range(len(board[line])):
-        if board[line][column]:
+    lines, columns = board.size
+
+    for line in range(lines):
+      for column in range(columns):
+        if board.state[line][column]:
           cell_rect = pygame.Rect(column * self.cell_size, line * self.cell_size, self.cell_size, self.cell_size)
           pygame.draw.rect(self.screen, 0, cell_rect)
