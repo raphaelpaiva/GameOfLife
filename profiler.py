@@ -28,15 +28,3 @@ with cProfile.Profile() as pr:
   for i in range(1000):
     game.update_board()
 pr.print_stats()
-
-#profile = cProfile.Profile()
-#profile.enable()
-#profile.disable()
-#
-#stats = Stats(profile)
-#
-#count_profile = stats.get_stats_profile().func_profiles['_count_neighbours']
-#avg_time = count_profile.cumtime / int(count_profile.ncalls)
-#
-#print(avg_time)
-#
