@@ -48,7 +48,6 @@ class Plotter(object):
     
     self.screen = pygame.display.set_mode(self.screen_size)
 
-
     self.ideal_cell_size = int( self.screen.get_height() / self.game.board.height )
     if cell_size is not None:
       self.cell_size = cell_size
@@ -91,10 +90,10 @@ class Plotter(object):
     if pygame.event.get(eventtype=pygame.QUIT):
       self._exit()
 
-    key_events = pygame.event.get(eventtype=pygame.KEYDOWN)
-    for key_event in key_events:
-      if key_event.key in self.events_by_key:
-        self.events_by_key[key_event.key]()
+    pressed_keys = pygame.key.get_pressed()
+    for key in self.events_by_key.keys():
+      if pressed_keys[key]:
+        self.events_by_key[key]()
 
     mouse_events = pygame.event.get(eventtype=pygame.MOUSEBUTTONDOWN)
     for mouse_event in mouse_events:
