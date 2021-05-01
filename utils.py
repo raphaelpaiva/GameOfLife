@@ -57,4 +57,4 @@ def print_quadrants(board_filename: str):
     dump_board(board=board, quadrant=quadrant, filename=f'{board_filename}_q{i+1}.bmp')
 
 if __name__ == '__main__':
-  print_quadrants('scenarios/testboard.bmp')
+  print_quadrants('tests/testboard_100_emptyq.bmp')

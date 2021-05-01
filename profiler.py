@@ -5,26 +5,29 @@ import json
 import gol
 import utils
 
-TEST_BOARD_FILENAME = 'scenarios/testboard.bmp'
-
+TEST_BOARD_FILENAME = 'scenarios/testboard_100_emptyq.bmp'
 testboard      = utils.load_board(TEST_BOARD_FILENAME)
-testboard_size = (len(testboard), len(testboard[0]))
 
 print(
 f"""
 Profile parameters: 
 board file: {TEST_BOARD_FILENAME}
-board size: {testboard_size}
+board size: {testboard.size}
 """
 )
 
+for max_depth in range(3):
+  game = gol.GameOfLife(
+    initial_board=testboard,
+    max_depth=max_depth + 1
+  )
 
+  print(f'# Max Depth: {max_depth + 1}')
+  print('```')
 
-game = gol.GameOfLife(
-  initial_board=testboard
-)
-
-with cProfile.Profile() as pr:
-  for i in range(1000):
-    game.update_board()
-pr.print_stats()
+  with cProfile.Profile() as pr:
+    for i in range(1000):
+      game.update_board()
+  pr.print_stats()
+  
+  print('```')

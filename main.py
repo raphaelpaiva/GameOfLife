@@ -34,7 +34,12 @@ def main():
     """
   )
 
-  game = GameOfLife(initial_board=initial_board)
+  game = GameOfLife(
+    initial_board=initial_board,
+    board_size=(200,200),
+    cell_life_probability=0.1,
+    max_depth=2
+  )
 
   plotter = Plotter(game=game)
 
