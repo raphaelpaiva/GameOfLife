@@ -43,6 +43,7 @@ class Plotter(object):
     self.clock = pygame.time.Clock()
 
     self.running = True
+    self.paused = True
     
     self.screen_size = screen_size
     
@@ -54,20 +55,22 @@ class Plotter(object):
     else:
       self.cell_size = self.ideal_cell_size
 
-    self.viewport = ViewPort(self.game.board.width, self.game.board.height, 0, 0, self.cell_size)
+    self.viewport = ViewPort(self.game.board.width, self.game.board.height, 0, 0, int(self.cell_size / 4))
     
-    self.paused = False
-    self.events_by_key = {
-      pygame.K_SPACE:  self._reset,
-      pygame.K_ESCAPE: self._exit,
-      pygame.K_p:      self._toggle_pause,
-      pygame.K_s:      self._update_game,
+    self.keypress_events_by_key = {
       pygame.K_EQUALS: self._increase_cell_life_probability,
       pygame.K_MINUS:  self._decrease_cell_life_probability,
       pygame.K_UP:     self.viewport.move_up,
       pygame.K_RIGHT:  self.viewport.move_right,
       pygame.K_DOWN:   self.viewport.move_down,
       pygame.K_LEFT:   self.viewport.move_left
+    }
+
+    self.toggle_events_by_key = {
+      pygame.K_SPACE:  self._reset,
+      pygame.K_ESCAPE: self._exit,
+      pygame.K_p:      self._toggle_pause,
+      pygame.K_s:      self._update_game
     }
 
   def run(self):
@@ -91,9 +94,13 @@ class Plotter(object):
       self._exit()
 
     pressed_keys = pygame.key.get_pressed()
-    for key in self.events_by_key.keys():
+    for key in self.keypress_events_by_key.keys():
       if pressed_keys[key]:
-        self.events_by_key[key]()
+        self.keypress_events_by_key[key]()
+
+    for key_event in pygame.event.get(eventtype=pygame.KEYDOWN):
+      if key_event.key in self.toggle_events_by_key:
+        self.toggle_events_by_key[key_event.key]()
 
     mouse_events = pygame.event.get(eventtype=pygame.MOUSEBUTTONDOWN)
     for mouse_event in mouse_events:
