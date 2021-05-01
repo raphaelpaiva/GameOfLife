@@ -75,7 +75,10 @@ class GameOfLife(object):
 
     lines, columns = self.board.size
 
-    quadrants = self.board.partition(0, 0, self.board.size)
+    if self.max_depth == 0:
+      quadrants = [(0, self.board.width - 1, 0, self.board.height - 1)]
+    else:
+      quadrants = self.board.partition(0, 0, self.board.size)
     for quadrant in quadrants:
       self._analyze_quadrant(quadrant, new_board, 1)
     
@@ -89,7 +92,7 @@ class GameOfLife(object):
     lines, columns = (i_stop - i_start) + 1, (j_stop - j_start) + 1
     size = (lines, columns)
     
-    live_cell_count = self.board.state[i_start:i_stop + 1,j_start:j_stop + 1].sum()
+    live_cell_count = self.board.state[i_start:i_stop + 2,j_start:j_stop + 2].sum() # nasty + 2.
 
     if live_cell_count > 0:
       if depth >= self.max_depth:
