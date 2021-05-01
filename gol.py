@@ -25,8 +25,10 @@ class Board(object):
       self.state = initial_state
       self.size = (len(self.state), len(self.state[0]))
     
+    self.height = self.size[0]
+    self.width = self.size[1]
     self.quadrants = self.partition(0, 0, self.size)
-  
+
   @staticmethod
   def partition(i_start: int, j_start: int, size: BoardSize_t):
     lines, columns = size
